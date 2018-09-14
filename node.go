@@ -18,3 +18,11 @@ func (node *Node) Get(key interface{}) (interface{}, bool) {
 func (node *Node) Set(key, value interface{}) {
 	node.Data[key] = value
 }
+
+func (node *Node) Remove(key interface{}) error {
+	if _, ok := node.Data[key]; !ok {
+		return ERR_NODE_VALUE_NOT_EXISTS
+	}
+	delete(node.Data, key)
+	return nil
+}

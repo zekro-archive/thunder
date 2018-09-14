@@ -2,6 +2,7 @@ package thunder
 
 import (
 	"encoding/gob"
+	"errors"
 	"io"
 	"os"
 )
@@ -13,12 +14,22 @@ type header struct {
 
 type nodeMap map[interface{}]*Node
 
+// DB is the struct containing the file name of the database,
+// the header containing database type and version and the
+// data as map of data nodes.
 type DB struct {
 	Filename string
 	Header   *header
 	Data     nodeMap
 }
 
+// Open creates a new instance of DB from database file.
+// If the passed file does not exist, it will be created
+// as empty database.
+// The file name and location is passed as string.
+// If no exceptions are occuring, the database instannce
+// will be returned. Else, the error will be returned as
+// second return value.
 func Open(filename string) (*DB, error) {
 	fhandler, err := os.Open(filename)
 	if os.IsNotExist(err) {
@@ -45,10 +56,20 @@ func Open(filename string) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	if obj.Header.Version > HEADER_VERSION {
+		return nil, errors.New("The database file version is newer than the package version. Please update your package to read the database file.")
+	}
 	obj.Filename = filename
 	return obj, err
 }
 
+// CreateNode creates a new node inside data base.
+// Notes are used to save key-value pair data.
+// As first arguement, the key will be passed as interface type.
+// Optional, the externally created node can be passed to
+// insert prepared nodes into the data base.
+// If no exceptions occure, the created node instance will be returned.
+// Else, the error will be returned as second return value.
 func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
 	if _, ok := db.Data[key]; ok {
 		return nil, ERR_NODE_KEY_EXISTS
@@ -62,11 +83,16 @@ func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
 	return db.Data[key], nil
 }
 
+// GetNode gets the node by key if exists.
+// It returns the node instance of the key and,
+// as bool, if the node key exists in the database.
 func (db *DB) GetNode(key interface{}) (*Node, bool) {
 	node, ok := db.Data[key]
 	return node, ok
 }
 
+// RemoveNode deletes the node by key in the database.
+// If erros occure, they will be returned as error.
 func (db *DB) RemoveNode(key interface{}) error {
 	if _, ok := db.Data[key]; !ok {
 		return ERR_NODE_KEY_NOT_EXISTS
@@ -76,6 +102,8 @@ func (db *DB) RemoveNode(key interface{}) error {
 	return nil
 }
 
+// Save saves the current database state to file.
+// If errors occure, they will be returned as error.
 func (db *DB) Save() error {
 	fhandler, err := os.OpenFile(db.Filename, os.O_WRONLY, 771)
 	defer fhandler.Close()
@@ -86,6 +114,8 @@ func (db *DB) Save() error {
 	return err
 }
 
+// Close closes the database file and saves the current
+// state of the database to the file.
 func (db *DB) Close() {
 	db.Save()
 }
