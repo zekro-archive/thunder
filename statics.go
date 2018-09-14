@@ -1,4 +1,4 @@
-package gobdb
+package thunder
 
 import "errors"
 
