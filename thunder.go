@@ -23,6 +23,23 @@ type DB struct {
 	Data     nodeMap
 }
 
+// ------------------------ PRIVATE FUNCS ------------------------
+
+func encode(db *DB, fhandler io.Writer) error {
+	gobencoder := gob.NewEncoder(fhandler)
+	err := gobencoder.Encode(db)
+	return err
+}
+
+func decode(fhandler io.Reader) (*DB, error) {
+	gobdecoder := gob.NewDecoder(fhandler)
+	obj := &DB{}
+	err := gobdecoder.Decode(obj)
+	return obj, err
+}
+
+// ------------------------ PUBLIC FUNCS ------------------------
+
 // Open creates a new instance of DB from database file.
 // If the passed file does not exist, it will be created
 // as empty database.
@@ -118,17 +135,4 @@ func (db *DB) Save() error {
 // state of the database to the file.
 func (db *DB) Close() {
 	db.Save()
-}
-
-func encode(db *DB, fhandler io.Writer) error {
-	gobencoder := gob.NewEncoder(fhandler)
-	err := gobencoder.Encode(db)
-	return err
-}
-
-func decode(fhandler io.Reader) (*DB, error) {
-	gobdecoder := gob.NewDecoder(fhandler)
-	obj := &DB{}
-	err := gobdecoder.Decode(obj)
-	return obj, err
 }

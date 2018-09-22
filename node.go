@@ -1,5 +1,7 @@
 package thunder
 
+import "encoding/gob"
+
 type genericMap map[interface{}]interface{}
 
 type Node struct {
@@ -16,6 +18,7 @@ func (node *Node) Get(key interface{}) (interface{}, bool) {
 }
 
 func (node *Node) Set(key, value interface{}) {
+	gob.Register(value)
 	node.Data[key] = value
 }
 

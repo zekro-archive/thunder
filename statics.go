@@ -5,7 +5,7 @@ import "errors"
 const (
 	// MISC
 	HEADER_NAME    = "godb_database_file"
-	HEADER_VERSION = 10
+	HEADER_VERSION = 101
 )
 
 var (
