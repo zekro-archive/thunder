@@ -53,19 +53,20 @@ func decode(fhandler io.Reader) (*DB, error) {
 // You need to register this type in gob before opening
 // like following:
 //	
-//		import (
-//			"encoding/gob"
-//			"github.com/zekroTJA/thunder"
-//		)
-//		type User struct {
-// 			username string
-//			uid      int64
-// 		}
+//	import (
+//		"encoding/gob"
+//		"github.com/zekroTJA/thunder"
+//	)
 //
-//  	func main() {
-//			gob.Register(map[string]*User)
-//			db, err := thunder.Open("myDb.th")
-//		}
+//	type User struct {
+// 		username string
+//		uid      int64
+// 	}
+//
+// 	func main() {
+//		gob.Register(map[string]*User)
+//		db, err := thunder.Open("myDb.th")
+//	}
 func Open(filename string) (*DB, error) {
 	gob.Register(map[interface{}]*Node{})
 
