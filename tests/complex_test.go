@@ -8,6 +8,11 @@ import (
 	thunder ".."
 )
 
+type User struct {
+	Username string
+	Uid      int64
+}
+
 func init() {
 	err := os.Remove(FILENAME)
 	if !os.IsNotExist(err) && err != nil {
@@ -17,14 +22,18 @@ func init() {
 
 func TestComplex(t *testing.T) {
 	var err error
+	var node *thunder.Node
+
+	thunder.Register(map[int]*User{})
+
 	db, err = thunder.Open(FILENAME)
 	check(err)
 
-	node, err := db.CreateNode(1)
+	node, err = db.CreateNode("t")
 	check(err)
 
-	testMap := make(map[int]string)
-	testMap[1] = "test1231231"
+	testMap := map[int]*User{}
+	testMap[1] = &User{"Herbert", 1234567890}
 
 	node.Set("test1", testMap)
 	node.Set("test2", 123)
@@ -34,7 +43,7 @@ func TestComplex(t *testing.T) {
 	db, err = thunder.Open(FILENAME)
 	check(err)
 
-	node, _ = db.GetNode(1)
+	node, ok := db.GetNode("t")
 
-	fmt.Println(node)
+	fmt.Println(node, ok)
 }

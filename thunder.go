@@ -47,7 +47,28 @@ func decode(fhandler io.Reader) (*DB, error) {
 // If no exceptions are occuring, the database instannce
 // will be returned. Else, the error will be returned as
 // second return value.
+//
+// If you get an error like:
+// "gob: name not registered for interface: <type>"
+// You need to register this type in gob before opening
+// like following:
+//	
+//		import (
+//			"encoding/gob"
+//			"github.com/zekroTJA/thunder"
+//		)
+//		type User struct {
+// 			username string
+//			uid      int64
+// 		}
+//
+//  	func main() {
+//			gob.Register(map[string]*User)
+//			db, err := thunder.Open("myDb.th")
+//		}
 func Open(filename string) (*DB, error) {
+	gob.Register(map[interface{}]*Node{})
+
 	fhandler, err := os.Open(filename)
 	if os.IsNotExist(err) {
 		obj := &DB{
