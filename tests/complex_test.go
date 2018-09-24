@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"encoding/gob"
+
 
 	thunder ".."
 )
@@ -24,7 +26,7 @@ func TestComplex(t *testing.T) {
 	var err error
 	var node *thunder.Node
 
-	thunder.Register(map[int]*User{})
+	gob.Register(map[int]*User{})
 
 	db, err = thunder.Open(FILENAME)
 	check(err)
