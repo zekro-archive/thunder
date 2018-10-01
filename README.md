@@ -13,7 +13,7 @@
 
 # Introduction
 
-`thunder` is a small, lightweight database and storage package for Go. This package is concipated for small data saving for your applications, simply structured by nodes containing key-value pair tables, without mind of formatting or serializing. Just save and load your data like you use it in your application. **Attention:** You sould know, that the full database file will be loaded in the memory on usage. So the memory usage will scale with the size of the database. This package is not designed for huge database scales!
+`thunder` is a small and lightweight database and storage package for Go. This package is concipated for small data saving for your application, simply structured by nodes containing key-value pair tables, without keeping formatting and serializing in mind. Just save and load your data like you use it in your application. **Attention:** You sould know, that the full database file will be loaded into the system memory on activation. So the memory usage will scale with the size of the database. This package is not designed for huge database!
 
 ---
 
@@ -115,7 +115,7 @@ func main() {
 }
 ```
 
-You can find some more examples in the `examples` folder in this repository.
+More examples are contained inside the `examples` folder in this repository.
 
 ---
 
