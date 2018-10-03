@@ -14,7 +14,7 @@ type header struct {
 
 type nodeMap map[interface{}]*Node
 
-// DB is the struct containing the file name of the database,
+// DB is the struct that contains the name of the of the database file,
 // the header containing database type and version and the
 // data as map of data nodes.
 type DB struct {
