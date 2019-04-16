@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"sync"
 )
 
 type header struct {
@@ -18,6 +19,9 @@ type nodeMap map[interface{}]*Node
 // the header containing database type and version and the
 // data as map of data nodes.
 type DB struct {
+	mx     *sync.Mutex
+	locked bool
+
 	Filename string
 	Header   *header
 	Data     nodeMap
@@ -36,6 +40,20 @@ func decode(fhandler io.Reader) (*DB, error) {
 	obj := &DB{}
 	err := gobdecoder.Decode(obj)
 	return obj, err
+}
+
+func (db *DB) lock() {
+	if db.mx != nil && !db.locked {
+		db.mx.Lock()
+		db.locked = true
+	}
+}
+
+func (db *DB) unlock() {
+	if db.mx != nil && db.locked {
+		db.locked = false
+		db.mx.Unlock()
+	}
 }
 
 // ------------------------ PUBLIC FUNCS ------------------------
@@ -73,6 +91,7 @@ func Open(filename string) (*DB, error) {
 	fhandler, err := os.Open(filename)
 	if os.IsNotExist(err) {
 		obj := &DB{
+			mx: new(sync.Mutex),
 			Header: &header{
 				Name:    headerName,
 				Version: headerVersion,
@@ -112,6 +131,9 @@ func Open(filename string) (*DB, error) {
 // If no exceptions occure, the created node instance will be returned.
 // Else, the error will be returned as second return value.
 func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
+	db.lock()
+	defer db.unlock()
+
 	if _, ok := db.Data[key]; ok {
 		return nil, ErrNodeKeyExists
 	}
@@ -128,6 +150,9 @@ func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
 // It returns the node instance of the key and,
 // as bool, if the node key exists in the database.
 func (db *DB) GetNode(key interface{}) (*Node, bool) {
+	db.lock()
+	defer db.unlock()
+
 	node, ok := db.Data[key]
 	return node, ok
 }
@@ -135,6 +160,9 @@ func (db *DB) GetNode(key interface{}) (*Node, bool) {
 // RemoveNode deletes the node by key in the database.
 // If erros occure, they will be returned as error.
 func (db *DB) RemoveNode(key interface{}) error {
+	db.lock()
+	defer db.unlock()
+
 	if _, ok := db.Data[key]; !ok {
 		return ErrNodeKeyNotExist
 	}
@@ -146,6 +174,9 @@ func (db *DB) RemoveNode(key interface{}) error {
 // Save saves the current database state to file.
 // If errors occure, they will be returned as error.
 func (db *DB) Save() error {
+	db.lock()
+	defer db.unlock()
+
 	fhandler, err := os.OpenFile(db.Filename, os.O_WRONLY, 771)
 	defer fhandler.Close()
 	if err != nil {
