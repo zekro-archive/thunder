@@ -24,7 +24,7 @@ func (node *Node) Set(key, value interface{}) {
 
 func (node *Node) Remove(key interface{}) error {
 	if _, ok := node.Data[key]; !ok {
-		return ERR_NODE_VALUE_NOT_EXISTS
+		return ErrNodeValueNotExist
 	}
 	delete(node.Data, key)
 	return nil

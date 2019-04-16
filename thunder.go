@@ -52,7 +52,7 @@ func decode(fhandler io.Reader) (*DB, error) {
 // "gob: name not registered for interface: <type>"
 // You need to register this type in gob before opening
 // like following:
-//	
+//
 //	import (
 //		"encoding/gob"
 //		"github.com/zekroTJA/thunder"
@@ -74,8 +74,8 @@ func Open(filename string) (*DB, error) {
 	if os.IsNotExist(err) {
 		obj := &DB{
 			Header: &header{
-				Name:    HEADER_NAME,
-				Version: HEADER_VERSION,
+				Name:    headerName,
+				Version: headerVersion,
 			},
 			Data:     make(nodeMap),
 			Filename: filename,
@@ -91,12 +91,13 @@ func Open(filename string) (*DB, error) {
 		return nil, err
 	}
 	defer fhandler.Close()
+
 	obj, err := decode(fhandler)
 	if err != nil {
 		return nil, err
 	}
-	if obj.Header.Version > HEADER_VERSION {
-		return nil, errors.New("The database file version is newer than the package version. Please update your package to read the database file.")
+	if obj.Header.Version > headerVersion {
+		return nil, errors.New("the database file version is newer than the package version")
 	}
 	obj.Filename = filename
 	return obj, err
@@ -111,7 +112,7 @@ func Open(filename string) (*DB, error) {
 // Else, the error will be returned as second return value.
 func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
 	if _, ok := db.Data[key]; ok {
-		return nil, ERR_NODE_KEY_EXISTS
+		return nil, ErrNodeKeyExists
 	}
 	if len(node) > 0 {
 		db.Data[key] = node[0]
@@ -134,7 +135,7 @@ func (db *DB) GetNode(key interface{}) (*Node, bool) {
 // If erros occure, they will be returned as error.
 func (db *DB) RemoveNode(key interface{}) error {
 	if _, ok := db.Data[key]; !ok {
-		return ERR_NODE_KEY_NOT_EXISTS
+		return ErrNodeKeyNotExist
 	}
 	delete(db.Data, key)
 	db.Save()

@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	thunder ".."
+	"github.com/zekroTJA/thunder"
 )
 
 const (

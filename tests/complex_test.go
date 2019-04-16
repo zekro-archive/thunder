@@ -1,13 +1,12 @@
 package thunder_test
 
 import (
+	"encoding/gob"
 	"fmt"
 	"os"
 	"testing"
-	"encoding/gob"
 
-
-	thunder ".."
+	"github.com/zekroTJA/thunder"
 )
 
 type User struct {

@@ -4,13 +4,13 @@ import "errors"
 
 const (
 	// MISC
-	HEADER_NAME    = "godb_database_file"
-	HEADER_VERSION = 101
+	headerName    = "godb_database_file"
+	headerVersion = 101
 )
 
 var (
 	// ERRORS
-	ERR_NODE_KEY_EXISTS       = errors.New("NODE_KEY_EXISTS")
-	ERR_NODE_KEY_NOT_EXISTS   = errors.New("NODE_KEY_NOT_EXISTS")
-	ERR_NODE_VALUE_NOT_EXISTS = errors.New("NODE_VALUE_NOT_EXISTS")
+	ErrNodeKeyExists     = errors.New("ndoe key already exist")
+	ErrNodeKeyNotExist   = errors.New("node key does not exist")
+	ErrNodeValueNotExist = errors.New("node value does not exist")
 )

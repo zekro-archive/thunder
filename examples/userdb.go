@@ -1,15 +1,15 @@
 package main
 
 import (
-	"os"
-	"log"
-	"fmt"
-	"time"
 	"bufio"
-	"strings"
 	"encoding/gob"
+	"fmt"
+	"log"
+	"os"
+	"strings"
+	"time"
 
-	thunder ".."
+	"github.com/zekroTJA/thunder"
 )
 
 type User struct {
@@ -20,15 +20,15 @@ type User struct {
 
 func NewUser(username string, uid int) *User {
 	return &User{
-		Username: username,
-		UID: uid,
+		Username:  username,
+		UID:       uid,
 		CreatedAt: time.Now().Unix(),
 	}
 }
 
 func (u *User) Print() {
 	fmt.Printf("Username:  %s\nUID:       %d\nCreatedAt: %d\n",
-			   u.Username, u.UID, u.CreatedAt)
+		u.Username, u.UID, u.CreatedAt)
 }
 
 func check(err error) {
@@ -45,6 +45,7 @@ func main() {
 
 	db, err := thunder.Open("userdb.th")
 	check(err)
+	defer db.Save()
 	defer db.Close()
 
 	nodeUsers, ok := db.GetNode("users")
@@ -52,6 +53,12 @@ func main() {
 		nodeUsers, err = db.CreateNode("users")
 		check(err)
 	}
+	fmt.Println("TEST")
+	defer func() {
+		n, _ := db.GetNode("users")
+		v, err := n.Get("test")
+		fmt.Println("TEST:", v, err)
+	}()
 
 	nodeStats, ok := db.GetNode("stats")
 	if !ok {
@@ -75,15 +82,15 @@ Available commands:
 		invoke := inptsplit[0]
 		args := inptsplit[1:]
 
-		if invoke == "exit" {
-			os.Exit(0)
+		if invoke[:len(invoke)-1] == "exit" {
+			break
 		}
 
 		if len(args) < 1 {
 			log.Println("[ERR] invalid number of argumnets")
 		}
 
-		switch (invoke) {
+		switch invoke {
 		case "get":
 			if user, ok := nodeUsers.Get(args[0]); ok {
 				user.(*User).Print()
@@ -96,7 +103,7 @@ Available commands:
 			} else {
 				var uid int
 				if _uid, ok := nodeStats.Get("lastuid"); ok {
-					uid = _uid.(int)+1
+					uid = _uid.(int) + 1
 				}
 				nodeStats.Set("lastuid", uid)
 
@@ -108,7 +115,10 @@ Available commands:
 			}
 		case "delete":
 			if _, ok := nodeUsers.Get(args[0]); ok {
-				nodeUsers.Remove(args[0])
+				err := nodeUsers.Remove(args[0])
+				if err != nil {
+					log.Println(err)
+				}
 				log.Println("user deleted")
 			} else {
 				log.Println("[ERR] user does not exist")
