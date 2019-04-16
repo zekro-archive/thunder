@@ -13,4 +13,5 @@ var (
 	ErrNodeKeyExists     = errors.New("ndoe key already exist")
 	ErrNodeKeyNotExist   = errors.New("node key does not exist")
 	ErrNodeValueNotExist = errors.New("node value does not exist")
+	ErrNodeNil           = errors.New("node is nil")
 )

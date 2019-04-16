@@ -99,6 +99,7 @@ func Open(filename string) (*DB, error) {
 	if obj.Header.Version > headerVersion {
 		return nil, errors.New("the database file version is newer than the package version")
 	}
+
 	obj.Filename = filename
 	return obj, err
 }
