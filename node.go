@@ -5,7 +5,9 @@ import (
 	"sync"
 )
 
-type genericMap map[interface{}]interface{}
+// DataMap is the map type containing the
+// "generic" data of the nodes.
+type DataMap map[interface{}]interface{}
 
 // A Node contains the actual key-value data
 // map where data handled with.
@@ -13,9 +15,11 @@ type Node struct {
 	mx     *sync.Mutex
 	locked bool
 
-	Data genericMap
+	data DataMap
 }
 
+// lock locks the mutex of the Node if it is
+// not already locked.
 func (node *Node) lock() {
 	if node.mx != nil && !node.locked {
 		node.mx.Lock()
@@ -23,6 +27,8 @@ func (node *Node) lock() {
 	}
 }
 
+// unlock unlocks the mutex of the Node if
+// it is locked.
 func (node *Node) unlock() {
 	if node.mx != nil && node.locked {
 		node.locked = false
@@ -33,7 +39,7 @@ func (node *Node) unlock() {
 // NewNode initializes a new node.
 func NewNode() *Node {
 	return &Node{
-		Data: make(genericMap),
+		data: make(DataMap),
 	}
 }
 
@@ -45,7 +51,7 @@ func (node *Node) Get(key interface{}) (interface{}, bool) {
 		return nil, false
 	}
 
-	value, ok := node.Data[key]
+	value, ok := node.data[key]
 	return value, ok
 }
 
@@ -58,7 +64,7 @@ func (node *Node) Set(key, value interface{}) error {
 	}
 
 	gob.Register(value)
-	node.Data[key] = value
+	node.data[key] = value
 
 	return nil
 }
@@ -71,10 +77,21 @@ func (node *Node) Remove(key interface{}) error {
 		return ErrNodeNil
 	}
 
-	if _, ok := node.Data[key]; !ok {
+	if _, ok := node.data[key]; !ok {
 		return ErrNodeValueNotExist
 	}
 
-	delete(node.Data, key)
+	delete(node.data, key)
 	return nil
+}
+
+// GetData returns the raw data map inside
+// the node. If the node pointer is nil, this
+// returns an ErrNodeNil error.
+func (node *Node) GetData() (DataMap, error) {
+	if node == nil {
+		return nil, ErrNodeNil
+	}
+
+	return node.data, nil
 }

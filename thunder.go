@@ -22,26 +22,33 @@ type DB struct {
 	mx     *sync.Mutex
 	locked bool
 
-	Filename string
-	Header   *header
-	Data     nodeMap
+	filename string
+	header   *header
+	data     nodeMap
 }
 
 // ------------------------ PRIVATE FUNCS ------------------------
 
+// encode transmits the data of the DB instance
+// to the passed file writer handler.
 func encode(db *DB, fhandler io.Writer) error {
 	gobencoder := gob.NewEncoder(fhandler)
 	err := gobencoder.Encode(db)
 	return err
 }
 
+// decode reads the data from the passed file
+// reader handler and parses th data to a new
+// instance of DB.
 func decode(fhandler io.Reader) (*DB, error) {
 	gobdecoder := gob.NewDecoder(fhandler)
-	obj := &DB{}
+	obj := new(DB)
 	err := gobdecoder.Decode(obj)
 	return obj, err
 }
 
+// lock locks the mutex of the DB if it is
+// not already locked.
 func (db *DB) lock() {
 	if db.mx != nil && !db.locked {
 		db.mx.Lock()
@@ -49,6 +56,8 @@ func (db *DB) lock() {
 	}
 }
 
+// unlock unlocks the mutex of the DB if
+// it is locked.
 func (db *DB) unlock() {
 	if db.mx != nil && db.locked {
 		db.locked = false
@@ -57,6 +66,15 @@ func (db *DB) unlock() {
 }
 
 // ------------------------ PUBLIC FUNCS ------------------------
+
+// Register records one or more types passed by an
+// instance of them to gob.
+// See gob#Register for more information.
+func Register(val ...interface{}) {
+	for _, v := range val {
+		gob.Register(v)
+	}
+}
 
 // Open creates a new instance of DB from database file.
 // If the passed file does not exist, it will be created
@@ -77,12 +95,12 @@ func (db *DB) unlock() {
 //	)
 //
 //	type User struct {
-// 		username string
-//		uid      int64
+// 		UserName string
+//		UID      int64
 // 	}
 //
 // 	func main() {
-//		gob.Register(map[string]*User)
+//		thunder.Register(*User)
 //		db, err := thunder.Open("myDb.th")
 //	}
 func Open(filename string) (*DB, error) {
@@ -92,12 +110,12 @@ func Open(filename string) (*DB, error) {
 	if os.IsNotExist(err) {
 		obj := &DB{
 			mx: new(sync.Mutex),
-			Header: &header{
+			header: &header{
 				Name:    headerName,
 				Version: headerVersion,
 			},
-			Data:     make(nodeMap),
-			Filename: filename,
+			data:     make(nodeMap),
+			filename: filename,
 		}
 		fhandler, err = os.Create(filename)
 		if err != nil {
@@ -115,11 +133,11 @@ func Open(filename string) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if obj.Header.Version > headerVersion {
+	if obj.header.Version > headerVersion {
 		return nil, errors.New("the database file version is newer than the package version")
 	}
 
-	obj.Filename = filename
+	obj.filename = filename
 	return obj, err
 }
 
@@ -134,16 +152,16 @@ func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
 	db.lock()
 	defer db.unlock()
 
-	if _, ok := db.Data[key]; ok {
+	if _, ok := db.data[key]; ok {
 		return nil, ErrNodeKeyExists
 	}
 	if len(node) > 0 {
-		db.Data[key] = node[0]
+		db.data[key] = node[0]
 	} else {
-		db.Data[key] = NewNode()
+		db.data[key] = NewNode()
 	}
 	db.Save()
-	return db.Data[key], nil
+	return db.data[key], nil
 }
 
 // GetNode gets the node by key if exists.
@@ -153,7 +171,7 @@ func (db *DB) GetNode(key interface{}) (*Node, bool) {
 	db.lock()
 	defer db.unlock()
 
-	node, ok := db.Data[key]
+	node, ok := db.data[key]
 	return node, ok
 }
 
@@ -163,10 +181,10 @@ func (db *DB) RemoveNode(key interface{}) error {
 	db.lock()
 	defer db.unlock()
 
-	if _, ok := db.Data[key]; !ok {
+	if _, ok := db.data[key]; !ok {
 		return ErrNodeKeyNotExist
 	}
-	delete(db.Data, key)
+	delete(db.data, key)
 	db.Save()
 	return nil
 }
@@ -177,7 +195,7 @@ func (db *DB) Save() error {
 	db.lock()
 	defer db.unlock()
 
-	fhandler, err := os.OpenFile(db.Filename, os.O_WRONLY, 771)
+	fhandler, err := os.OpenFile(db.filename, os.O_WRONLY, 771)
 	defer fhandler.Close()
 	if err != nil {
 		return err

@@ -3,8 +3,15 @@ package thunder
 import "errors"
 
 const (
-	// MISC
-	headerName    = "godb_database_file"
+	// headerName indicates thunder that the read
+	// gob file is realy a thunder database file.
+	headerName = "godb_database_file"
+	// headerversion is to check if the version of
+	// thunder the database was created with a
+	// version which si not backwards compatible.
+	// So this version is not th actual thunder
+	// version because it is only increased when
+	// the database structure has changed.
 	headerVersion = 101
 )
 
