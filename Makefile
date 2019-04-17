@@ -45,8 +45,8 @@ GOLINT = golint
 
 # ---------------------------------------------
 
-TAG    = $(shell git describe --tags)
-COMMIT = $(shell git rev-parse HEAD)
+# TAG    = $(shell git describe --tags)
+# COMMIT = $(shell git rev-parse HEAD)
 
 
 ifneq ($(GOOS),)
@@ -98,12 +98,6 @@ help:
 	@echo "  example  - run example"
 	@echo "  lint     - run linters (golint)"
 	@echo "  test     - run tests (go test)"
-	@echo ""
-	@echo "Cross Compiling:"
-	@echo "  (env GOOS=linux GOARCH=arm make)"
-	@echo ""
-	@echo "Use different configs for run:"
-	@echo "  make CONF=./myCustomConfig.yml run"
 	@echo ""
 
 
