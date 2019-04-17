@@ -23,8 +23,9 @@ type DB struct {
 	locked bool
 
 	filename string
-	header   *header
-	data     nodeMap
+
+	Header *header
+	Data   nodeMap
 }
 
 // ------------------------ PRIVATE FUNCS ------------------------
@@ -110,11 +111,11 @@ func Open(filename string) (*DB, error) {
 	if os.IsNotExist(err) {
 		obj := &DB{
 			mx: new(sync.Mutex),
-			header: &header{
+			Header: &header{
 				Name:    headerName,
 				Version: headerVersion,
 			},
-			data:     make(nodeMap),
+			Data:     make(nodeMap),
 			filename: filename,
 		}
 		fhandler, err = os.Create(filename)
@@ -133,7 +134,7 @@ func Open(filename string) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	if obj.header.Version > headerVersion {
+	if obj.Header.Version > headerVersion {
 		return nil, errors.New("the database file version is newer than the package version")
 	}
 
@@ -152,16 +153,16 @@ func (db *DB) CreateNode(key interface{}, node ...*Node) (*Node, error) {
 	db.lock()
 	defer db.unlock()
 
-	if _, ok := db.data[key]; ok {
+	if _, ok := db.Data[key]; ok {
 		return nil, ErrNodeKeyExists
 	}
 	if len(node) > 0 {
-		db.data[key] = node[0]
+		db.Data[key] = node[0]
 	} else {
-		db.data[key] = NewNode()
+		db.Data[key] = NewNode()
 	}
 	db.Save()
-	return db.data[key], nil
+	return db.Data[key], nil
 }
 
 // GetNode gets the node by key if exists.
@@ -171,7 +172,7 @@ func (db *DB) GetNode(key interface{}) (*Node, bool) {
 	db.lock()
 	defer db.unlock()
 
-	node, ok := db.data[key]
+	node, ok := db.Data[key]
 	return node, ok
 }
 
@@ -181,10 +182,10 @@ func (db *DB) RemoveNode(key interface{}) error {
 	db.lock()
 	defer db.unlock()
 
-	if _, ok := db.data[key]; !ok {
+	if _, ok := db.Data[key]; !ok {
 		return ErrNodeKeyNotExist
 	}
-	delete(db.data, key)
+	delete(db.Data, key)
 	db.Save()
 	return nil
 }

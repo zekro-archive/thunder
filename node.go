@@ -15,7 +15,7 @@ type Node struct {
 	mx     *sync.Mutex
 	locked bool
 
-	data DataMap
+	Data DataMap
 }
 
 // lock locks the mutex of the Node if it is
@@ -39,7 +39,7 @@ func (node *Node) unlock() {
 // NewNode initializes a new node.
 func NewNode() *Node {
 	return &Node{
-		data: make(DataMap),
+		Data: make(DataMap),
 	}
 }
 
@@ -51,7 +51,7 @@ func (node *Node) Get(key interface{}) (interface{}, bool) {
 		return nil, false
 	}
 
-	value, ok := node.data[key]
+	value, ok := node.Data[key]
 	return value, ok
 }
 
@@ -64,7 +64,7 @@ func (node *Node) Set(key, value interface{}) error {
 	}
 
 	gob.Register(value)
-	node.data[key] = value
+	node.Data[key] = value
 
 	return nil
 }
@@ -77,11 +77,11 @@ func (node *Node) Remove(key interface{}) error {
 		return ErrNodeNil
 	}
 
-	if _, ok := node.data[key]; !ok {
+	if _, ok := node.Data[key]; !ok {
 		return ErrNodeValueNotExist
 	}
 
-	delete(node.data, key)
+	delete(node.Data, key)
 	return nil
 }
 
@@ -93,5 +93,5 @@ func (node *Node) GetData() (DataMap, error) {
 		return nil, ErrNodeNil
 	}
 
-	return node.data, nil
+	return node.Data, nil
 }
