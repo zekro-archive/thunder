@@ -49,23 +49,6 @@ GOLINT = golint
 # COMMIT = $(shell git rev-parse HEAD)
 
 
-ifneq ($(GOOS),)
-	BIN := $(BIN)_$(GOOS)
-endif
-
-ifneq ($(GOARCH),)
-	BIN := $(BIN)_$(GOARCH)
-endif
-
-ifneq ($(TAG),)
-	BIN := $(BIN)_$(TAG)
-endif
-
-ifeq ($(OS),Windows_NT)
-	BIN := $(BIN).exe
-endif
-
-
 PHONY = _make
 _make: cleanup tests
 

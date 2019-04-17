@@ -1,3 +1,6 @@
+// Package thunder povides a simple key-value
+// file storage using encoding/gob for file
+// encoding/decoding.
 package thunder
 
 import (
