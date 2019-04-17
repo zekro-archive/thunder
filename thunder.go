@@ -8,6 +8,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path"
 	"sync"
 )
 
@@ -88,6 +89,9 @@ func Register(val ...interface{}) {
 // will be returned. Else, the error will be returned as
 // second return value.
 //
+// Directories not existent will be created automatically
+// with file permission mdoe 0750.
+//
 // If you get an error like:
 // "gob: name not registered for interface: <type>"
 // You need to register this type in gob before opening
@@ -109,6 +113,13 @@ func Register(val ...interface{}) {
 //	}
 func Open(filename string) (*DB, error) {
 	gob.Register(map[interface{}]*Node{})
+
+	dir := path.Dir(filename)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		if err = os.MkdirAll(dir, 0750); err != nil {
+			return nil, err
+		}
+	}
 
 	fhandler, err := os.Open(filename)
 	if os.IsNotExist(err) {
