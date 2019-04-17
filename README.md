@@ -1,3 +1,14 @@
+<div align="center">	
+     <!-- <img src="https://zekro.de/src/go_chat_logo.png" width="400"/> -->	
+     <h1>~ thunder ~</h1>	
+     <strong>Small and fast database package for Go</strong><br><br>	
+     <img src="https://forthebadge.com/images/badges/made-with-go.svg" height="30" />&nbsp;	
+     <!-- <img src="https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg" height="30" />&nbsp; -->	
+     <a href="https://travis-ci.org/zekroTJA/thunder"><img src="https://img.shields.io/travis/zekroTJA/thunder.svg?style=for-the-badge&logo=travis" height="30"></a>&nbsp;	
+     <a href="https://godoc.org/github.com/zekroTJA/thunder"><img src="https://img.shields.io/badge/docs-godoc-0ee6ea.svg?style=for-the-badge" height="30"></a>&nbsp;	
+     <a href="https://zekro.de/discord"><img src="https://img.shields.io/discord/307084334198816769.svg?logo=discord&style=for-the-badge" height="30"></a>	
+</div>
+
 ---
 
 # Introduction
