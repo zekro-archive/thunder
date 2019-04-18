@@ -1,19 +1,19 @@
-<div align="center">
-     <!-- <img src="https://zekro.de/src/go_chat_logo.png" width="400"/> -->
-     <h1>~ thunder ~</h1>
-     <strong>Small and fast database package for Go</strong><br><br>
-     <img src="https://forthebadge.com/images/badges/made-with-go.svg" height="30" />&nbsp;
-     <!-- <img src="https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg" height="30" />&nbsp; -->
-     <a href="https://travis-ci.org/zekroTJA/thunder"><img src="https://img.shields.io/travis/zekroTJA/thunder.svg?style=for-the-badge&logo=travis" height="30"></a>&nbsp;
-     <a href="https://godoc.org/github.com/zekroTJA/thunder"><img src="https://img.shields.io/badge/docs-godoc-0ee6ea.svg?style=for-the-badge" height="30"></a>&nbsp;
-     <a href="https://zekro.de/discord"><img src="https://img.shields.io/discord/307084334198816769.svg?logo=discord&style=for-the-badge" height="30"></a>
+<div align="center">	
+     <!-- <img src="https://zekro.de/src/go_chat_logo.png" width="400"/> -->	
+     <h1>~ thunder ~</h1>	
+     <strong>Small and fast database package for Go</strong><br><br>	
+     <img src="https://forthebadge.com/images/badges/made-with-go.svg" height="30" />&nbsp;	
+     <!-- <img src="https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg" height="30" />&nbsp; -->	
+     <a href="https://travis-ci.org/zekroTJA/thunder"><img src="https://img.shields.io/travis/zekroTJA/thunder.svg?style=for-the-badge&logo=travis" height="30"></a>&nbsp;	
+     <a href="https://godoc.org/github.com/zekroTJA/thunder"><img src="https://img.shields.io/badge/docs-godoc-0ee6ea.svg?style=for-the-badge" height="30"></a>&nbsp;	
+     <a href="https://zekro.de/discord"><img src="https://img.shields.io/discord/307084334198816769.svg?logo=discord&style=for-the-badge" height="30"></a>	
 </div>
 
 ---
 
 # Introduction
 
-`thunder` is a small and lightweight database and storage package for Go. This package is concipated for small data saving for your application, simply structured by nodes containing key-value pair tables, without keeping formatting and serializing in mind. Just save and load your data like you use it in your application. **Attention:** You sould know, that the full database file will be loaded into the system memory on activation. So the memory usage will scale with the size of the database. This package is not designed for huge database!
+`thunder` is a small and lightweight database and storage package for Go. This package is constipated for small data saving for your application, simply structured by nodes containing key-value pair tables, without keeping formatting and serializing in mind. Just save and load your data as you use it in your application. **Attention:** You should know, that the full database file will be loaded into the system memory on activation. So the memory usage will scale with the size of the database. This package is not designed for the huge database!
 
 ---
 
@@ -24,7 +24,7 @@ Get the package with
 go get github.com/zekroTJA/thunder
 ```
 
-Then, cretae a new database by opening a non existing file. This will always automaticall create a new and empty database:
+Then, create a new database by opening a non-existing file. This will always automatically create a new and empty database:
 
 ```go
 
@@ -67,7 +67,7 @@ func main() {
 
 ```
 
-If you are using custom structs or *'complex'* types, you need to register them in `gob` that the database can be deserialized properly.
+If you are using custom structs or *complex'* types, you need to register them in `gob` that the database can be deserialized properly.
 
 ```go
 
@@ -122,5 +122,3 @@ More examples are contained inside the `examples` folder in this repository.
 © 2018 zekro Development  
 
 [zekro.de](https://zekro.de) | contact[at]zekro.de
-
-
